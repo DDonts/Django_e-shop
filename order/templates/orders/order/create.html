@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Order creation
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row">
+    <div class="col-lg-6">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                <div class="row">
+                    <div class="col-lg-4">
+                        {{ field.label }}
+                    </div>
+                    <div class="col-1">
+                        {{ field }}
+                    </div>
+                </div>
+            </p>
+        {% endfor %}
+        <input class="btn btn-primary" type="submit" value="Order">
+    </form>
+    </div>
+
+    <div class="col-lg-5">
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                    <tr>
+                        <td>x{{ item.quantity }} {{ item.product.title }}</td>
+                        <td>{{ item.total_price }} RUB</td>
+                    </tr>
+                {% endfor %}
+                {% if cart.coupon %}
+                    <tr class="table-danger">
+                        <td>Subtotal</td>
+                        <td>{{ cart.get_total_price }} RUB</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            "{{ cart.coupon.code }}" coupon
+                            ({{ cart.coupon.discount }}% off)
+                        </td>
+                        <td>- {{ cart.get_discount|floatformat:2 }} RUB</td>
+                    </tr>
+                    <tr class="table-primary">
+                        <td>Summary</td>
+                        <td>{{ cart.get_total_price_after_discount|floatformat:2 }} RUB</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% endblock %}

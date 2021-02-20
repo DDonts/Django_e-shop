@@ -1,0 +1,92 @@
+ <!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <link href="{% static 'css/pdf.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>Order #{{ order.id }}</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Donts Shop</h1>
+<div class="">
+     <div class="card">
+         <div class="card-header p-4">
+             <div class="float-right">
+                 <h3 class="mb-0">Invoice #{{ order.id}}</h3>
+                     <p>
+                        <span>
+                            {{ order.created|date:"M d, Y" }}
+                        </span>
+                    </p>
+             </div>
+         </div>
+         <div class="card-body">
+             <div class="row mb-4">
+                 <div class="col-sm-6 ">
+                        <h2 class="mb-3">Bill to:</h2>
+                        <h3 class="text-dark mb-1">{{ order.first_name }} {{ order.last_name }}</h3>
+                        <div>{{ order.email }}</div>
+                        <div>{{ order.address_name }}</div>
+                        <div>{{ order.postal_code }}, {{ order.city }}</div>
+                 </div>
+             </div>
+             <div class="table-responsive-sm">
+                 <table class="table table-striped">
+                     <thead>
+                         <tr>
+                             <th>Item</th>
+                             <th class="right">Price</th>
+                             <th class="center">Qty</th>
+                             <th class="right">Total</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                        {% for item in order.items.all %}
+                             <tr>
+                                 <td class="left strong">{{ item.product.title }}</td>
+                                 <td class="right">{{ item.price }} RUB</td>
+                                 <td class="center">{{ item.quantity }}</td>
+                                 <td class="right">{{ item.get_cost }} RUB</td>
+                             </tr>
+                        {% endfor %}
+                        {% if order.coupon %}
+                            <tr class="subtotal">
+                                <td><strong>Subtotal</strong></td>
+                                <td colspan="2"></td>
+                                <td>{{ order.get_total_cost }} RUB</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        "{{ order.coupon.code }}" coupon
+                                        ({{ order.coupon.discount }}% off)
+                                    </strong>
+                                </td>
+                                <td colspan="2"></td>
+                                <td>- {{ order.get_discount|floatformat:2 }} RUB</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Summary</strong></td>
+                                <td colspan="2"></td>
+                                <td><strong>{{ order.get_total_cost_after_discount|floatformat:2 }} RUB</strong></td>
+                            </tr>
+                        {% endif %}
+                     </tbody>
+                 </table>
+             </div>
+             <div class="row">
+                 <div class="col-lg-4 col-sm-5">
+                        <span class="{% if order.paid %}paid{% else %}pending{% endif %}">
+                            {% if order.paid %}Paid{% else %}Pending payment{% endif %}
+                        </span>
+                 </div>
+             </div>
+         </div>
+         <div class="card-footer bg-white">
+             <p class="mb-0">Donts Shop</p>
+         </div>
+     </div>
+ </div>
+</body>
+</html>

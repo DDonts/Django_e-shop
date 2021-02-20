@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-3 text-white">
+        <div class="row">
+            <div class="col-3">
+                <img class="img-thumbnail crop" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}">
+            </div>
+            <div class="col">
+                <h1>{{ product.title }}</h1>
+                <p class="text-break">{{ product.description }}</p>
+                Price: {{ product.price }} RUB.<br><br>
+                {% with product.specs.all as specs %}
+                    <table class="table table-dark w-75">
+                        <thead>
+                            <tr>
+                                <th>Specification</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for spec in specs %}
+                                    <tr>
+                                        <td>{{ spec.name }}</td>
+                                        <td>{{ spec.value }}</td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                {% endwith %}
+                <form method="post" action="{% url 'cart:cart_add' product.id %}">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" value="Buy"><br>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
